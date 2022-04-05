@@ -1,5 +1,5 @@
-[![go.mod](https://img.shields.io/github/go-mod/go-version/williabk198/templates/go-api-server-template)](go.mod)
-[![LICENSE](https://img.shields.io/github/license/williabk198/templates/go-api-server-template)](LICENSE) 
+[![go.mod](https://img.shields.io/github/go-mod/go-version/williabk198/go-api-server-template)](go.mod)
+[![LICENSE](https://img.shields.io/github/license/williabk198/go-api-server-template)](LICENSE) 
 
 # Go API Server Template
 
