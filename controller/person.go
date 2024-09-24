@@ -14,7 +14,7 @@ import (
 )
 
 type personDataHandler struct {
-	personDatastore db.Datastore[db.Person]
+	personDatastore db.Datastore[db.Person, uuid.UUID]
 	logger          *slog.Logger
 }
 
@@ -51,16 +51,14 @@ func (pdh personDataHandler) Add(w http.ResponseWriter, r *http.Request) {
 func (pdh personDataHandler) GetSpecific(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	jsonEncoder := json.NewEncoder(w)
-	person := person{ID: chi.URLParam(r, "id")}
-
-	dbPerson, err := person.asDatabaseModel()
+	personID, err := uuid.Parse(chi.URLParam(r, "id"))
 	if err != nil {
-		pdh.logger.Error("failed to read request data", "error", err)
+		pdh.logger.Error("failed to parse UUID from URL parameter", "error", err)
 		sendErrorResponse(w, http.StatusNotFound, jsonEncoder)
 		return
 	}
 
-	err = pdh.personDatastore.Get(ctx, dbPerson)
+	dbPerson, err := pdh.personDatastore.Get(ctx, personID)
 	if err != nil {
 		if errors.Is(err, db.ErrNoResultsFound) {
 			sendErrorResponse(w, http.StatusNotFound, jsonEncoder)
@@ -78,16 +76,14 @@ func (pdh personDataHandler) GetSpecific(w http.ResponseWriter, r *http.Request)
 func (pdh personDataHandler) Remove(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	jsonEncoder := json.NewEncoder(w)
-	person := person{ID: chi.URLParam(r, "id")}
-
-	dbPerson, err := person.asDatabaseModel()
+	personID, err := uuid.Parse(chi.URLParam(r, "id"))
 	if err != nil {
-		pdh.logger.Error("failed to read request data", "error", err)
+		pdh.logger.Error("failed to parse UUID from URL parameter", "error", err)
 		sendErrorResponse(w, http.StatusNotFound, jsonEncoder)
 		return
 	}
 
-	err = pdh.personDatastore.Remove(ctx, dbPerson)
+	_, err = pdh.personDatastore.Remove(ctx, personID)
 	if err != nil {
 		if errors.Is(err, db.ErrNoResultsFound) {
 			sendErrorResponse(w, http.StatusNotFound, jsonEncoder)

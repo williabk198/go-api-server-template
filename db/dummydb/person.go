@@ -11,13 +11,17 @@ import (
 type personDatastore struct{}
 
 // Get implements db.Datastore.
-func (p personDatastore) Get(ctx context.Context, item *db.Person) error {
+func (p personDatastore) Get(ctx context.Context, id uuid.UUID) (*db.Person, error) {
 
-	item.FirstName = "Testy"
-	item.LastName = "McTesterson"
-	item.DateOfBirth = time.Date(1970, 1, 1, 0, 0, 0, 0, time.UTC)
+	result := &db.Person{
+		ID:          id,
+		FirstName:   "Testy",
+		LastName:    "McTesterson",
+		DateOfBirth: time.Date(1970, 1, 1, 0, 0, 0, 0, time.UTC),
+		Removed:     db.NewBool(false),
+	}
 
-	return nil
+	return result, nil
 }
 
 // Insert implements db.Datastore.
@@ -27,9 +31,16 @@ func (p personDatastore) Insert(ctx context.Context, item *db.Person) error {
 }
 
 // Remove implements db.Datastore.
-func (p personDatastore) Remove(ctx context.Context, item *db.Person) error {
-	item.Removed = db.NewBool(true)
-	return nil
+func (p personDatastore) Remove(ctx context.Context, id uuid.UUID) (*db.Person, error) {
+	result := &db.Person{
+		ID:          id,
+		FirstName:   "Testy",
+		LastName:    "McTesterson",
+		DateOfBirth: time.Date(1970, 1, 1, 0, 0, 0, 0, time.UTC),
+		Removed:     db.NewBool(true),
+	}
+
+	return result, nil
 }
 
 // Update implements db.Datastore.
